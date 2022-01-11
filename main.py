@@ -1,3 +1,5 @@
+from db import DB
+
 def openLog(fileName: str) -> list:
     with open(fileName, 'r', encoding='utf-8') as file: 
         log = []
@@ -15,4 +17,5 @@ def openLog(fileName: str) -> list:
 
 log, bdTable = openLog('log.txt')
 
-print(log, bdTable)
+db = DB('localhost', 'bd2', 'teste', 'teste')
+db.createTable('log')
