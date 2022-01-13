@@ -1,4 +1,5 @@
 from db import DB
+from log import Log
 
 def openLog(fileName: str) -> list:
     with open(fileName, 'r', encoding='utf-8') as file: 
@@ -32,4 +33,6 @@ for line in dbTable:
 db.createTable('log', dbTableColumns)
 db.fillTable('log', dbTableData)
 
-
+log = Log(log, db.tableColumns['log'])
+log.parse()
+log.showResults()
