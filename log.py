@@ -1,3 +1,5 @@
+from db import DB
+
 class Log:
     transactions = []
     commitedTransactions = []
@@ -8,8 +10,9 @@ class Log:
     outstandingTransactions = []
     findTransactionStart = 0
 
-    def __init__(self, log: list, tableColumns: list) -> None:
+    def __init__(self, log: list, tableColumns: list, db: DB) -> None:
         self.tableColumns = tableColumns
+        self.db = db
         self.log = log[::-1]
 
     def parse(self) -> None:
@@ -18,7 +21,7 @@ class Log:
 
             if line.startswith('commit'):
                 self.commitedTransactions.append(line.split()[1])
-            elif line.startswith('start') and 'checkpoint' not in line:
+            elif line.startswith('start') and 'checkpoint' not in line and not self.findCheckpoint:
                 self.transactions.append(line.split()[1])
                 if line.split()[1] in self.outstandingTransactions:
                     self.findTransactionStart += 1
@@ -26,6 +29,7 @@ class Log:
                 if (self.validCheckpoint):
                     self.findCheckpoint = True
                     self.outstandingTransactions = [x.strip() for x in line[line.index('(') + 1:line.index(')')].split(',')]
+                    self.transactions += self.outstandingTransactions
                 self.validCheckpoint = False
             elif line == 'end checkpoint':
                 if self.lastCheckpoint == False:
@@ -44,8 +48,27 @@ class Log:
                 break
 
     def showResults(self) -> None:
+        print("Saída:\n")
+
         for transaction in self.transactions:
             if transaction in self.commitedTransactions:
                 print(f"A transição {transaction} realizou REDO")
             elif transaction in self.outstandingTransactions:
                 print(f"A transição {transaction} não realizou REDO")
+        
+        self.showVariables()
+
+    def executeREDO(self) -> None:
+        for transaction in self.transactions:
+            if transaction in self.commitedTransactions:
+                self.db.updateTable('log', self.transactionChanges[transaction])
+
+    def showVariables(self):
+        dbTable = self.db.selectTable('log')
+        dbColumns = self.db.tableColumns['log']
+
+        print("\nVariáveis:\n")
+
+        for reg in dbTable:
+            for index,column in enumerate(dbColumns):
+                print(f"{reg[0]},{column} = {reg[index+1]}")

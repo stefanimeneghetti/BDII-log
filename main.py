@@ -33,6 +33,7 @@ for line in dbTable:
 db.createTable('log', dbTableColumns)
 db.fillTable('log', dbTableData)
 
-log = Log(log, db.tableColumns['log'])
+log = Log(log, db.tableColumns['log'], db)
 log.parse()
+log.executeREDO()
 log.showResults()

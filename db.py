@@ -62,3 +62,33 @@ class DB:
 
         self.connection.commit()
         self.closeConnection()
+
+    def updateTable(self, tableName: str, transactionData: dict) -> None:
+        self.openConnection()
+        cursor = self.connection.cursor()
+
+        baseSql = 'UPDATE ' + tableName + ' SET '
+
+        for id in transactionData:
+            sql = ''
+            for column in transactionData[id]:
+                if sql != '':
+                    sql += ', '
+                sql += column + '=' + transactionData[id][column]
+            sql = baseSql + sql + ' WHERE id = ' + id
+            cursor.execute(sql)        
+
+        self.connection.commit()
+        self.closeConnection()
+
+    def selectTable(self, tableName: str) -> list:
+        self.openConnection()
+        cursor = self.connection.cursor()
+        columns = 'id'
+        for column in self.tableColumns[tableName]:
+            columns += ', ' + column
+        cursor.execute('SELECT ' + columns + ' FROM '+tableName+';')
+        res = cursor.fetchall()
+        self.closeConnection()
+
+        return res
