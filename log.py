@@ -21,7 +21,7 @@ class Log:
 
             if line.startswith('commit'):
                 self.commitedTransactions.append(line.split()[1])
-            elif line.startswith('start') and 'checkpoint' not in line and not self.findCheckpoint:
+            elif line.startswith('start') and 'ckpt' not in line and not self.findCheckpoint:
                 self.transactions.append(line.split()[1])
                 if line.split()[1] in self.outstandingTransactions:
                     self.findTransactionStart += 1
@@ -31,7 +31,7 @@ class Log:
                     self.outstandingTransactions = [x.strip() for x in line[line.index('(') + 1:line.index(')')].split(',')]
                     self.transactions += self.outstandingTransactions
                 self.validCheckpoint = False
-            elif line == 'end checkpoint':
+            elif line == 'end ckpt':
                 if self.lastCheckpoint == False:
                     self.lastCheckpoint = True  
                     self.validCheckpoint = True
