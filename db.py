@@ -51,7 +51,7 @@ class DB:
         for item in tableColumns:
             columns += ', ' + item
 
-        baseSql = 'INSERT INTO log (id' + columns + ') values ('
+        baseSql = 'INSERT INTO ' + tableName + ' (id' + columns + ') values ('
 
         for id in tableData:
             sql = baseSql + id

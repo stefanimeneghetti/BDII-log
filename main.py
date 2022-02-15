@@ -1,7 +1,6 @@
 import os
 import sys
 from dotenv import load_dotenv
-from simplejson import load
 from db import DB
 from log import Log
 
@@ -10,7 +9,6 @@ load_dotenv()
 if (len(sys.argv) < 2):
     print("É necessário informar o nome do arquivo de log")
     exit(0)
-
 
 TABLE_NAME = os.environ.get('TABLE_NAME')
 DB_HOST = os.environ.get('DB_HOST')
